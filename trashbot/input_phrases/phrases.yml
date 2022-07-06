@@ -1,0 +1,16 @@
+adapt_phrases:
+  reminders:
+    keywords:
+      - reminder
+      - remind
+    actions:
+      - add
+      - remove
+      - delete
+      - cancel
+      - update
+      - change
+
+  timer:
+
+  weather:
