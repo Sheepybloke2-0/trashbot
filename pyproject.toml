@@ -7,6 +7,7 @@ license = "MIT"
 
 [tool.poetry.scripts]
 parsing = 'trashbot.cli.commands:test_parsing'
+create-table = 'trashbot.cli.commands:create_reminder_table'
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
@@ -20,6 +21,7 @@ flake8 = "^4.0.1"
 black = "^22.6.0"
 PyYAML = "^6.0"
 attrs = "^21.4.0"
+dateparser = "^1.1.1"
 
 [tool.poetry.dev-dependencies]
 ipython = "^8.4.0"

@@ -9,6 +9,7 @@ import attr as attrs
 from adapt.engine import IntentDeterminationEngine
 from adapt.intent import IntentBuilder
 
+from ..types import reminder as rt
 from ..utils import logger
 
 
@@ -19,9 +20,13 @@ class ReminderParser:
     _engine: IntentDeterminationEngine = attrs.field(init=False)
     _intent: IntentBuilder = attrs.field(init=False)
     _keywords: list[str] = attrs.field(factory=list)
-    _actions: list[str] = attrs.field(factory=list)
+    _actions: dict[str, str] = attrs.field(factory=dict)
 
-    def initialize(self, phrase_file_path: pathlib.Path):
+    _manager: rt.ReminderManager = attrs.field(init=False)
+
+    def initialize(
+        self, phrase_file_path: pathlib.Path, database_file_path: pathlib.Path
+    ):
         self._logger = logger.getLogger(__name__)
         self._logger.info("Adding engine...")
         self._engine = IntentDeterminationEngine()
@@ -39,8 +44,9 @@ class ReminderParser:
         for keyword in self._keywords:
             self._engine.register_entity(keyword, "ReminderKeywords")
 
-        for action in self._actions:
-            self._engine.register_entity(action, "ReminderActions")
+        for action in self._actions.values():
+            for keyword in action:
+                self._engine.register_entity(keyword, "ReminderActions")
 
         # self._engine.register_regex_entity("[at|for] (?P<Time>.*) {reminder}")
         self._engine.register_regex_entity(
@@ -52,11 +58,11 @@ class ReminderParser:
         )
 
         self._engine.register_regex_entity(
-            "(on|for) (?P<Date>(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\D?(\d{1,2}\D?))"
+            "(on|for) (?P<Day>((this week|next week|) (?:sun(?:day)?|mon(?:day)?|tue(?:sday)?|wed(?:nesday)?|thu(?:rsday)?|fri(?:day)?|sat(?:urday)?)))"
         )
 
         self._engine.register_regex_entity(
-            "(on|for) (?P<Day>((this week|next week|) (?:sun(?:day)?|mon(?:day)?|tue(?:sday)?|wed(?:nesday)?|thu(?:rsday)?|fri(?:day)?|sat(?:urday)?)))"
+            "(for|in) (?P<TimeOffset>(tomorrow|today|two days))"
         )
 
         self._engine.register_regex_entity("to (?P<Reminder>.*)")
@@ -69,13 +75,18 @@ class ReminderParser:
             .optionally("Time")
             .optionally("Date")
             .optionally("Day")
+            .optionally("TimeOffset")
             .require("Reminder")
             .build()
         )
         self._logger.info("Registering intents...")
         self._engine.register_intent_parser(self._intent)
 
+        self._manager = rt.ReminderManager(self._actions)
+        self._manager.init_reminders(database_file_path=database_file_path)
+
     def determine_intent(self, phrase: str):
         for intent in self._engine.determine_intent(phrase):
             if intent.get("confidence") > 0:
-                self._logger.info("Parsed intent: %s", json.dumps(intent, indent=4))
+                if intent["intent_type"] == "ReminderIntent":
+                    self._manager.parse_and_handle_intent(intent)

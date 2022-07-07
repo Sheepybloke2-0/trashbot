@@ -4,13 +4,16 @@ adapt_phrases:
       - reminder
       - remind me
     actions:
-      - add
-      - remove
-      - delete
-      - cancel
-      - update
-      - change
-      - set
+      create:
+        - add
+        - set
+      update:
+        - update
+        - change
+      remove:
+        - remove
+        - delete
+        - cancel
 
   timer:
     keywords:
