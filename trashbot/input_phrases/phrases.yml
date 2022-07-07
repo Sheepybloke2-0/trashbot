@@ -2,7 +2,7 @@ adapt_phrases:
   reminders:
     keywords:
       - reminder
-      - remind
+      - remind me
     actions:
       - add
       - remove
@@ -10,7 +10,20 @@ adapt_phrases:
       - cancel
       - update
       - change
+      - set
 
   timer:
+    keywords:
+      - timer
+    actions:
+      - add
+      - remove
+      - delete
+      - cancel
+      - update
+      - change
+      - repeat
+      - stop
+      - halt
 
   weather:

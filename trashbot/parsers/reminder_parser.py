@@ -39,15 +39,43 @@ class ReminderParser:
         for keyword in self._keywords:
             self._engine.register_entity(keyword, "ReminderKeywords")
 
+        for action in self._actions:
+            self._engine.register_entity(action, "ReminderActions")
+
+        # self._engine.register_regex_entity("[at|for] (?P<Time>.*) {reminder}")
+        self._engine.register_regex_entity(
+            "(at|for) (?P<Time>(1[0-2]|0?[1-9]):([0-5][0-9])?([AaPp][Mm]))"
+        )
+
+        self._engine.register_regex_entity(
+            "(on|for) (?P<Date>(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\D?(\d{1,2}\D?))"
+        )
+
+        self._engine.register_regex_entity(
+            "(on|for) (?P<Date>(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\D?(\d{1,2}\D?))"
+        )
+
+        self._engine.register_regex_entity(
+            "(on|for) (?P<Day>((this week|next week|) (?:sun(?:day)?|mon(?:day)?|tue(?:sday)?|wed(?:nesday)?|thu(?:rsday)?|fri(?:day)?|sat(?:urday)?)))"
+        )
+
+        self._engine.register_regex_entity("to (?P<Reminder>.*)")
+
         self._logger.info("Building intents...")
         self._intent = (
-            IntentBuilder("ReminderIntent").require("ReminderKeywords").build()
+            IntentBuilder("ReminderIntent")
+            .require("ReminderKeywords")
+            .require("ReminderActions")
+            .optionally("Time")
+            .optionally("Date")
+            .optionally("Day")
+            .require("Reminder")
+            .build()
         )
         self._logger.info("Registering intents...")
         self._engine.register_intent_parser(self._intent)
 
     def determine_intent(self, phrase: str):
         for intent in self._engine.determine_intent(phrase):
-            self._logger.info("Intent: %s", intent)
             if intent.get("confidence") > 0:
                 self._logger.info("Parsed intent: %s", json.dumps(intent, indent=4))
