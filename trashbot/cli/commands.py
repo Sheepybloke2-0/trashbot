@@ -4,7 +4,7 @@ import pathlib
 
 import click
 
-from ..parsers.reminder_parser import ReminderParser
+from ..parsers.parser import Parser
 from ..managers.database import DatabaseManager
 
 
@@ -19,7 +19,7 @@ from ..managers.database import DatabaseManager
 def test_parsing(
     input, phrases_file_path: pathlib.Path, database_file_path: pathlib.Path
 ):
-    parser = ReminderParser()
+    parser = Parser()
     try:
         parser.initialize(
             phrase_file_path=phrases_file_path, database_file_path=database_file_path

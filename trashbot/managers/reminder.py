@@ -63,6 +63,8 @@ class ReminderManager:
             self._reminders[new_reminder.id].notification_time,
         )
 
+    # TODO: Update these when we get the UI setup... I think there
+    # is going to have to bee a decent change for this..
     def _delete_reminder(self, intent: dict[str, str]):
         self._logger.critical("LOL MAYBE SOMEDAY! %s", intent)
 

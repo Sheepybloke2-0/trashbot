@@ -2,11 +2,13 @@ adapt_phrases:
   reminders:
     keywords:
       - reminder
-      - remind me
+      - remind
     actions:
       create:
         - add
         - set
+        # Assume me is part of the remind as an action
+        - me
       update:
         - update
         - change
@@ -19,14 +21,23 @@ adapt_phrases:
     keywords:
       - timer
     actions:
-      - add
-      - remove
-      - delete
-      - cancel
-      - update
-      - change
-      - repeat
-      - stop
-      - halt
+      create:
+        - add
+        - start
+        - set
+        - create
+      remove:
+        - remove
+        - delete
+        - cancel
+        - stop
+      update:
+        - update
+        - change
+        - repeat
+        - stop
+        - halt
 
   weather:
+    keywords:
+      - weather
