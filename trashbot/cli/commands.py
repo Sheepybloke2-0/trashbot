@@ -6,6 +6,7 @@ import click
 
 from ..parsers.parser import Parser
 from ..managers.database import DatabaseManager
+from ..utils import async_util
 
 
 @click.command()
@@ -16,7 +17,8 @@ from ..managers.database import DatabaseManager
 @click.option(
     "-d", "--database-file", "database_file_path", type=pathlib.Path, required=True
 )
-def test_parsing(
+@async_util.async_cmd
+async def test_parsing(
     input, phrases_file_path: pathlib.Path, database_file_path: pathlib.Path
 ):
     parser = Parser()
@@ -24,7 +26,7 @@ def test_parsing(
         parser.initialize(
             phrase_file_path=phrases_file_path, database_file_path=database_file_path
         )
-        parser.determine_intent(input)
+        await parser.determine_intent(input)
     finally:
         parser.close()
 

@@ -45,7 +45,7 @@ class ReminderManager:
         if intent.get("Time") is not None:
             date_str += " " + intent["Time"]
 
-        parsed_time = dateparser.parse(date_str, settings={"TIMEZONE": "PST"})
+        parsed_time = dateparser.parse(date_str, settings={"TIMEZONE": "PDT"})
         if datetime.datetime.now().date() > parsed_time.date():
             parsed_time = parsed_time.replace(year=parsed_time.year + 1)
         self._logger.debug("Parsed time: %s", parsed_time)

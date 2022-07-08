@@ -95,15 +95,15 @@ class Parser:
         self._engine.register_regex_entity("(in|at|for) (?P<Location>.*)")
 
         self._engine.register_regex_entity(
-            "for (?P<DurationHours>((1[0-2]|0?[1-9]) hours*))"
+            "for (?P<DurationHours>(([1-2][0-9]|[1-9]) hours*))"
         )
 
         self._engine.register_regex_entity(
-            "for (?P<DurationMinutes>((1[0-5]|0?[1-9]) minutes*))"
+            "for (?P<DurationMinutes>(([1-5][0-9]|[1-9]) minutes*))"
         )
 
         self._engine.register_regex_entity(
-            "for (?P<DurationSeconds>((1[0-5]|0?[1-9]) seconds*))"
+            "for (?P<DurationSeconds>(([1-5][0-9]|[1-9]) seconds*))"
         )
 
         self._logger.debug("Building intents...")
@@ -150,13 +150,13 @@ class Parser:
 
         self._timer_manager = tt.TimerManager(self._timer_actions)
 
-    def determine_intent(self, phrase: str):
+    async def determine_intent(self, phrase: str):
         for intent in self._engine.determine_intent(phrase):
             if intent.get("confidence") > 0:
                 if intent["intent_type"] == "ReminderIntent":
                     self._reminder_manager.parse_and_handle_intent(intent)
                 elif intent["intent_type"] == "TimerIntent":
-                    self._timer_manager.parse_and_handle_intent(intent)
+                    await self._timer_manager.parse_and_handle_intent(intent)
 
     def close(self):
         self._dbm.close_db()
