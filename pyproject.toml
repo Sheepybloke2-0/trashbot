@@ -22,6 +22,7 @@ black = "^22.6.0"
 PyYAML = "^6.0"
 attrs = "^21.4.0"
 dateparser = "^1.1.1"
+pytest = "^7.1.2"
 
 [tool.poetry.dev-dependencies]
 ipython = "^8.4.0"

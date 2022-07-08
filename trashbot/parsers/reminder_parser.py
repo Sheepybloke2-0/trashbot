@@ -85,8 +85,8 @@ class ReminderParser:
         self._logger.debug("Registering intents...")
         self._engine.register_intent_parser(self._intent)
 
-        self._manager = rt.ReminderManager(self._actions)
-        self._manager.init_reminders(dbm=self._dbm)
+        self._manager = rt.ReminderManager(self._actions, self._dbm)
+        self._manager.init_reminders()
 
     def determine_intent(self, phrase: str):
         for intent in self._engine.determine_intent(phrase):

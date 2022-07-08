@@ -17,17 +17,19 @@ class ReminderManager:
     _action_keywords: dict[str, str]
     _dbm: DatabaseManager
 
-    def __init__(self, action_keywords: dict[str, str]) -> None:
+    def __init__(self, action_keywords: dict[str, str], dbm: DatabaseManager) -> None:
         self._reminders = {}
-        self._dbm = None
+        self._dbm = dbm
         self._action_keywords = action_keywords
         self._logger = logger.getLogger(__name__)
 
-    def init_reminders(self, dbm: DatabaseManager):
-        self._dbm = dbm
-        reminders = self._dbm.get_reminders()
-        for reminder in reminders:
-            self._reminders[reminder.id] = reminder
+    def init_reminders(self):
+        if self._dbm.check_for_table("reminders"):
+            reminders = self._dbm.get_reminders()
+            for reminder in reminders:
+                self._reminders[reminder.id] = reminder
+        else:
+            self._dbm.create_reminder_table()
 
     def _create_reminder(self, intent: dict[str, str]):
         date_str = ""

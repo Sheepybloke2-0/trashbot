@@ -12,12 +12,10 @@ from ..types.reminders import Reminder
 class DatabaseManager:
     _logger: logging.Logger
     _db_conn: sqlite3.Connection
-    _db_cursor: sqlite3.Cursor
     _db_path: pathlib.Path
 
     def __init__(self, database_file_path: pathlib.Path):
         self._db_conn = None
-        self._db_cursor = None
         self._db_path = None
         self._logger = logger.getLogger(__name__)
         self.connect_db(database_file_path)
@@ -30,6 +28,17 @@ class DatabaseManager:
 
     def close_db(self):
         self._db_conn.close()
+
+    def check_for_table(self, name: str) -> bool:
+        with self._db_conn:
+            cursor = self._db_conn.execute(
+                """
+                SELECT count(name) FROM sqlite_master
+                WHERE type='table' AND name=?
+                """,
+                (name,),
+            )
+            return cursor.fetchone()[0] == 1
 
     def create_reminder_table(self):
         query = """
@@ -63,7 +72,7 @@ class DatabaseManager:
                 self._logger.debug("row - %s", row)
                 reminders.append(
                     Reminder(
-                        id=row[0],
+                        id=int(row[0]),
                         reminder=row[1],
                         notification_time=datetime.datetime.fromisoformat(row[2]),
                     )
