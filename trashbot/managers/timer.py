@@ -5,9 +5,6 @@ import datetime
 import logging
 import re
 
-import dateparser
-from numpy import mat
-
 from ..utils import logger
 
 
@@ -104,16 +101,7 @@ class TimerManager:
         self._logger.info("Added a timer!")
 
     def _update_timer(self, intent: dict[str, str]):
-        time_str = ""
-        self._logger.debug("Intent: %s", intent)
-        if intent.get("DurationHours") is not None:
-            time_str += intent["DurationHours"]
-        if intent.get("DurationMinutes") is not None:
-            time_str += " " + intent["DurationMinutes"]
-        if intent.get("DurationSeconds") is not None:
-            time_str += " " + intent["DurationSeconds"]
-
-        self._timer_end = dateparser.parse(time_str, settings={"TIMEZONE": "PST"})
+        self._logger.error("NEED TO ADD THIS")
         self._logger.info("Updated the timer!")
 
     def _remove_timer(self, intent: dict[str, str]):
